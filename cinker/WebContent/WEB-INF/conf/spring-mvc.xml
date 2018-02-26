@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+            http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+	<!-- 启用spring mvc 注解 -->
+	<context:annotation-config />
+
+	<!-- 类似连接器 -->
+	<mvc:annotation-driven conversion-service="conversionService">
+		<mvc:message-converters register-defaults="true">
+			<ref bean="stringHttpMessageConverter" />
+			<ref bean="fastJsonHttpMessageConverter" />
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 将Jackson2HttpMessageConverter的默认格式化输出设为true -->
+	<bean id="fastJsonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="prettyPrint" value="true" />
+	</bean>
+
+	<!-- 将StringHttpMessageConverter的默认编码设为UTF-8 -->
+	<bean id="stringHttpMessageConverter"
+		class="org.springframework.http.converter.StringHttpMessageConverter">
+		<constructor-arg value="UTF-8" />
+	</bean>
+	<!--读取配置文件-->
+	<bean id="configProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+         <property name="locations">
+              <list>
+                  <value>classpath:wechat.properties</value>
+              </list>
+          </property>
+      </bean>
+      <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+          <property name="properties" ref="configProperties" />
+     </bean> 
+     
+	<bean id="conversionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<!-- 转换器 -->
+		<property name="converters">
+			<list>
+				<bean class="com.cinker.util.CustomDateConverter"></bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 上传 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="10485760" />
+		<property name="maxInMemorySize" value="4096"></property>
+	</bean>
+
+	<!-- 视图文件解析配置 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/view/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+
+	<context:component-scan base-package="com.cinker.action" use-default-filters="false"><!-- base-package 如果多个，用“,”分隔 -->
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+		
+	<mvc:resources location="/WEB-INF/cinker/images/" mapping="/images/**" />  
+	<mvc:resources location="/WEB-INF/cinker/css/" mapping="/css/**" />  
+	<mvc:resources location="/WEB-INF/cinker/js/" mapping="/js/**" /> 
+	<mvc:resources location="/WEB-INF/cinker/fonts/" mapping="/fonts/**" /> 
+	<mvc:resources location="/upload/" mapping="/upload/**" />
+	
+	<!-- 此拦截器没有做出任何处理 在此注释掉-->
+   	<mvc:interceptors>
+   		<mvc:interceptor>
+   			<mvc:mapping path="/cinkerMaintain/**"/>
+   			<mvc:exclude-mapping path="/film/*"/>
+	    	<bean class="com.cinker.common.CommonInterceptor">
+	    	</bean>
+    	</mvc:interceptor>
+    	<mvc:interceptor>
+   			<mvc:mapping path="/film/**"/>
+   			<mvc:mapping path="/activity/**"/>
+   			<mvc:mapping path="/usermember/**"/>
+   			<mvc:mapping path="/recharge/**"/>
+   			<mvc:exclude-mapping path="/user/login"/>
+   			<mvc:exclude-mapping path="/wechat/*"/>
+	    	<bean class="com.cinker.common.WechatLoginInterceptor">
+	    	</bean>
+    	</mvc:interceptor>
+    </mvc:interceptors>
+      	
+</beans>

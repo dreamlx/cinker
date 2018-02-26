@@ -1,0 +1,91 @@
+@font-face{font-family: bikoRegular;src: url('../fonts/Biko_Regular.otf'),url('../fonts/Biko_Regular.ttf');}
+.enfont{font-family:"bikoRegular";}
+body{
+	background-color: #9b2e34;
+	/*color:white;*/
+}
+a.homepage_btn{
+	border:1px solid #fff;
+	width:80%;
+	display:block;
+	height:3rem;
+	margin:0 auto;
+	background:no-repeat scroll center center;
+}
+a.homepage_btn#dinner_btn{
+	background-image:url("../../images/cpsh/homepage_3.png");
+	background-size: 30%
+}
+
+a.homepage_btn#champagne_btn{
+	background-image:url("../../images/cpsh/homepage_4.png");
+	background-size: 47%
+}
+
+a.homepage_btn#book_dinner_btn{
+	background-image:url("../../images/cpsh/menu_btn_1.png");
+	background-size: 32%
+}
+
+a.homepage_btn#book_champagne_btn{
+	background-image:url("../../images/cpsh/menu_btn_2.png");
+	background-size: 32%
+}
+
+div.form_line{
+	height:50px;
+	width:90%;
+	background:white no-repeat scroll center center;
+	background-size: 100%;
+	margin: 0 auto;
+	margin-top:5%;
+}
+
+div#book_form_name{
+	background-image:url('../../images/cpsh/book_name.png') ;
+}
+
+div#book_form_tel{
+	background-image:url('../../images/cpsh/book_tel.png') ;
+}
+
+#book_form_num, #book_form_num2{
+	background-image:url('../../images/cpsh/book_number.png') ;
+}
+
+div#book_form_date{
+	background-image:url('../../images/cpsh/book_date.png') ;
+	line-height: 53px;
+    text-indent: 25%;
+}
+
+div#book_form_price_1{
+	background-image:url('../../images/cpsh/book_price_1.png') ;
+	line-height: 53px;
+    text-indent: 40%;
+}
+div#book_form_price_2{
+	background-image:url('../../images/cpsh/book_price_2.png') ;
+	line-height: 53px;
+    text-indent: 40%;
+}
+
+a.book_pay_btn{
+	border:1px solid #fff;
+	width:90%;
+	display:block;
+	height:3rem;
+	margin:0 auto;
+	background:url("../../images/cpsh/book_btn.png") no-repeat scroll center center;
+	background-size: 23%
+}
+
+.book_form_input{
+	margin-top: 5%;
+    margin-left: 38%;
+    font-size: 16px;
+	border:none;
+	background-color: white;
+}
+
+form .enfont{color:#e19684;font-size:0.9rem;font-weight: bold}
