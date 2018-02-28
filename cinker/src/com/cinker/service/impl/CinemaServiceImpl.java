@@ -301,19 +301,32 @@ public class CinemaServiceImpl implements CinemaService{
 	}
 
 	@Override
+	public int findOrderCount(String orderNumber, String filmTitle,
+			String beginTime, String endTime, String vistaTransNumber,
+			String beginShowTime, String endShowTime,String status,Integer page,String submit1,String submit2,String cinemaId) {
+		return cinemaDao.findOrderCount(orderNumber, filmTitle, beginTime, endTime, vistaTransNumber, beginShowTime, endShowTime, status, page, submit1, submit2, cinemaId);
+	}
+	@Override
 	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,
-			String beginTime, String endTime, String scheduledFilmId,
-			String beginShowTime, String endShowTime,Integer page,String submit1,String submit2,String cinemaId) {
+			String beginTime, String endTime, String vistaTransNumber,
+			String beginShowTime, String endShowTime,String status,Integer page,String submit1,String submit2,String cinemaId) {
 		
-		return cinemaDao.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime,page,submit1,submit2,cinemaId);
+		return cinemaDao.getSearch(orderNumber, filmTitle, beginTime, endTime, vistaTransNumber, beginShowTime, endShowTime,status,page,submit1,submit2,cinemaId);
 	}
 
 	@Override
+	public int findOrderCount(String orderNumber, String filmTitle,
+			String beginTime, String endTime, String scheduledFilmId,
+			String beginShowTime, String endShowTime,String status,String cinemaId) {
+		
+		return cinemaDao.findOrderCount(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime,status,cinemaId);
+	}
+	@Override
 	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,
 			String beginTime, String endTime, String scheduledFilmId,
-			String beginShowTime, String endShowTime,String cinemaId) {
+			String beginShowTime, String endShowTime,String status,String cinemaId) {
 		
-		return cinemaDao.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime, cinemaId);
+		return cinemaDao.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime,status,cinemaId);
 	}
 
 	

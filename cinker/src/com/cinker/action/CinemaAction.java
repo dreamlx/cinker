@@ -56,7 +56,8 @@ import com.cinker.wechat.WxPayUtil;
 @Controller
 @RequestMapping("/cinkerMaintain")
 public class CinemaAction {
-		
+	private final String ORDER_PAY = "1";
+	private final String ORDER_NO_PAY = "0";
 	private int pageSize = 20;
 	@Autowired
 	CinemaService cinemaService;
@@ -312,11 +313,11 @@ public class CinemaAction {
 	}
 	
 	@RequestMapping(value = "/getSearchFilmOrders", method={GET , POST})
-	public String getSearchFilmOrders(HttpServletResponse response,HttpServletRequest request,Model model,String orderNumber,String filmTitle, String beginTime,String endTime,String scheduledFilmId,
-			String beginShowTime,String endShowTime,String submit1,String submit2,Integer page,Integer pagee,String cinemaId) throws UnsupportedEncodingException{
+	public String getSearchFilmOrders(HttpServletResponse response,HttpServletRequest request,Model model,String orderNumber,String filmTitle, String beginTime,String endTime,String vistaTransNumber,
+			String beginShowTime,String endShowTime,String status,String submit1,String submit2,Integer page,Integer pagee,String cinemaId) throws UnsupportedEncodingException{
 		List<FilmOrders> orderList = null;
 		/* 修改提交方式为POST，防止tomcat版本不同，造成默认编码格式不同出现的乱码问题
-		 * if(!StringUtils.isEmpty(submit2)){
+		if(!StringUtils.isEmpty(submit2)){
 			submit2 = request.getParameter("submit2");
 			submit2 = new String(submit2.getBytes("iso8859-1"),"UTF-8");
 		}
@@ -328,7 +329,12 @@ public class CinemaAction {
 		List<Cinema> cinemas = filmService.getCinemas();
 		model.addAttribute("cinemas", cinemas);
 		model.addAttribute("inCinemaId", cinemaId);
-		int total = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime, 0,submit1,submit2,cinemaId).size();
+		String orderStatus;
+		if(status!=null)
+			orderStatus = status;
+		else
+			orderStatus = ORDER_PAY;
+		int total = cinemaService.findOrderCount(orderNumber, filmTitle, beginTime, endTime, vistaTransNumber, beginShowTime, endShowTime, orderStatus,0,submit1,submit2,cinemaId);
 		int totalPage = total/pageSize;
 		if(total%pageSize != 0){
 			totalPage++;
@@ -336,37 +342,13 @@ public class CinemaAction {
 		Page pages = new Page();
 		if(pagee != null){
 			page = pagee;
-			orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime, page,submit1,submit2,cinemaId);			
-			for(FilmOrders filmOrder:orderList){
-				filmOrder.setUserNickName(URLDecoder.decode(filmOrder.getUserNickName(),"utf-8"));
-				//20180110 find paySuccess but not get ticket
-				if (filmOrder.getPaymentID() != 0) {
-					Payment payment = cinemaService.findPayment(String.valueOf(filmOrder.getPaymentID()));
-					if (payment != null) {
-						int paymentStatus = payment.getStatus();
-						if(paymentStatus == 1 && filmOrder.getStatus() == 0){
-							filmOrder.setStatus(8);
-						}
-					}
-				}
-			}
+			orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, vistaTransNumber, beginShowTime, endShowTime, orderStatus,page,submit1,submit2,cinemaId);			
+			orderList = modifyOrderInfo(orderList);
 			pages.setPage(page);
 		}
 		if(page != null){
-			orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime, page,submit1,submit2,cinemaId);
-			for(FilmOrders filmOrder:orderList){
-				filmOrder.setUserNickName(URLDecoder.decode(filmOrder.getUserNickName(),"utf-8"));
-				//20180110 find paySuccess but not get ticket
-				if (filmOrder.getPaymentID() != 0) {
-					Payment payment = cinemaService.findPayment(String.valueOf(filmOrder.getPaymentID()));
-					if (payment != null) {
-						int paymentStatus = payment.getStatus();
-						if(paymentStatus == 1 && filmOrder.getStatus() == 0){
-							filmOrder.setStatus(8);
-						}
-					}
-				}
-			}
+			orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, vistaTransNumber, beginShowTime, endShowTime, orderStatus,page,submit1,submit2,cinemaId);
+			orderList = modifyOrderInfo(orderList);
 			pages.setPage(page);
 		}
 		pages.setTotal(total);
@@ -374,59 +356,23 @@ public class CinemaAction {
 		pages.setPageSize(pageSize);
 		if(!StringUtils.isEmpty(submit2)){
 			if(StringUtils.isEmpty(submit1)){
-				total = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime,cinemaId).size();
-				for(FilmOrders filmOrder:orderList){
-					filmOrder.setUserNickName(URLDecoder.decode(filmOrder.getUserNickName(),"utf-8"));
-					//20180110 find paySuccess but not get ticket
-					if (filmOrder.getPaymentID() != 0) {
-						Payment payment = cinemaService.findPayment(String.valueOf(filmOrder.getPaymentID()));
-						if (payment != null) {
-							int paymentStatus = payment.getStatus();
-							if(paymentStatus == 1 && filmOrder.getStatus() == 0){
-								filmOrder.setStatus(8);
-							}
-						}
-					}
-				}
+				total = cinemaService.findOrderCount(orderNumber, filmTitle, beginTime, endTime, vistaTransNumber, beginShowTime, endShowTime,orderStatus,cinemaId);
+				orderList = modifyOrderInfo(orderList);
 				totalPage = total/pageSize;
 				if(total%pageSize != 0){
 					totalPage++;
 				}
 				if(pagee != null){
 					page = pagee;
-					orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime, page,submit1,submit2,cinemaId);			
-					for(FilmOrders filmOrder:orderList){
-						filmOrder.setUserNickName(URLDecoder.decode(filmOrder.getUserNickName(),"utf-8"));
-						//20180110 find paySuccess but not get ticket
-						if (filmOrder.getPaymentID() != 0) {
-							Payment payment = cinemaService.findPayment(String.valueOf(filmOrder.getPaymentID()));
-							if (payment != null) {
-								int paymentStatus = payment.getStatus();
-								if(paymentStatus == 1 && filmOrder.getStatus() == 0){
-									filmOrder.setStatus(8);
-								}
-							}
-						}
-					}
+					orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, vistaTransNumber, beginShowTime, endShowTime, orderStatus,page,submit1,submit2,cinemaId);			
+					orderList = modifyOrderInfo(orderList);
 					pages.setPage(page);
 				}else{
 					pagee = 1;
 				}
 				if(page != null){
-					orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime, page,submit1,submit2,cinemaId);
-					for(FilmOrders filmOrder:orderList){
-						filmOrder.setUserNickName(URLDecoder.decode(filmOrder.getUserNickName(),"utf-8"));
-						//20180110 find paySuccess but not get ticket
-						if (filmOrder.getPaymentID() != 0) {
-							Payment payment = cinemaService.findPayment(String.valueOf(filmOrder.getPaymentID()));
-							if (payment != null) {
-								int paymentStatus = payment.getStatus();
-								if(paymentStatus == 1 && filmOrder.getStatus() == 0){
-									filmOrder.setStatus(8);
-								}
-							}
-						}
-					}
+					orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, vistaTransNumber, beginShowTime, endShowTime, orderStatus,page,submit1,submit2,cinemaId);
+					orderList = modifyOrderInfo(orderList);
 					pages.setPage(page);
 				}else{
 					page = 1;
@@ -438,14 +384,15 @@ public class CinemaAction {
 				model.addAttribute("beginTime", beginTime);
 				model.addAttribute("endTime", endTime);
 				model.addAttribute("submit2", submit2);
-				model.addAttribute("scheduledFilmId", scheduledFilmId);
+				model.addAttribute("vistaTransNumber", vistaTransNumber);
 				model.addAttribute("beginShowTime", beginShowTime);
 				model.addAttribute("endShowTime", endShowTime);
+				model.addAttribute("orderStatus", orderStatus);
 			}
 		}
 		if(!StringUtils.isEmpty(submit1)){
 			try{
-				orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, scheduledFilmId, beginShowTime, endShowTime,cinemaId);
+				orderList = cinemaService.getSearch(orderNumber, filmTitle, beginTime, endTime, vistaTransNumber, beginShowTime, endShowTime,orderStatus,cinemaId);
 				String title = "订单表";
 				String[] rowsName = new String[]{"ID","订单编号","影院名称","影片名称","场次名称","微信名称","姓名","电话","开始时间",
 						"订单数量","订单购买总价","订单生成时间","订单完成时间","座位","会员等级"};
@@ -459,7 +406,7 @@ public class CinemaAction {
 					objs[2] = ord.getCinemaName();
 					objs[3] = ord.getFilmTitle();
 					objs[4] = ord.getSessionName();
-					objs[5] = ord.getUserNickName();
+					objs[5] = java.net.URLDecoder.decode(ord.getUserNickName(), "UTF-8");
 					objs[6] = ord.getUserName();
 					objs[7] = ord.getMobilePhone();
 					objs[8] = ord.getShowTime();
@@ -482,6 +429,40 @@ public class CinemaAction {
 		model.addAttribute("pages", pages);
 		model.addAttribute("pagee", pagee);
 		return "admin/orderList";
+	}
+	/**
+	 * Descrption paySuccess but not get ticket and compute unit price
+	 * @param FilmOrders
+	 * @throws UnsupportedEncodingException 
+	 */
+	private List<FilmOrders> modifyOrderInfo(List<FilmOrders> FilmOrders) throws UnsupportedEncodingException {
+		List<FilmOrders> orderList = FilmOrders;
+		for(FilmOrders filmOrder:FilmOrders){
+			filmOrder.setUserNickName(URLDecoder.decode(filmOrder.getUserNickName(),"utf-8"));
+			//20180110 find paySuccess but not get ticket
+			if (filmOrder.getPaymentID() != 0) {
+				Payment payment = cinemaService.findPayment(String.valueOf(filmOrder.getPaymentID()));
+				if (payment != null) {
+					int paymentStatus = payment.getStatus();
+					if(paymentStatus == 1 && filmOrder.getStatus() == 0){
+						filmOrder.setStatus(8);
+					}
+				}
+			}
+			//compute unit price
+			Double totalValueCents = Double.valueOf(filmOrder.getTotalValueCents());
+			Double totalOrderCount = (double) filmOrder.getTotalOrderCount();
+			Double unitPrice = 0d;
+			if(totalOrderCount != 0 && totalOrderCount != null)
+				unitPrice = totalValueCents/totalOrderCount;
+			filmOrder.setUnitPrice(String.format("%.2f", unitPrice));
+			//change date format
+			if(filmOrder.getEndTime() != null) {
+				if(filmOrder.getEndTime().trim().length()>19)
+					filmOrder.setEndTime(filmOrder.getEndTime().substring(0, 19));	
+			}
+		}
+		return orderList;
 	}
 
 	@RequestMapping(value = "/editCinema/{id}",method={GET , POST})

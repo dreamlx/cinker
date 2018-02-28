@@ -24,7 +24,7 @@ public interface FilmDao {
 	
 	public TicketType getTicketType(String orderNumber);
 	
-	public void updateOrderSuccess(int status,Date endTime,String bookingNumber,String bookingId,String orderNumber);
+	public void updateOrderSuccess(int status,Date endTime,String bookingNumber,String bookingId,String vistaTransNumber,String orderNumber);
 	
 	public void cancleOrder(int status,String id);
 	
@@ -47,4 +47,5 @@ public interface FilmDao {
 	public List<Screen> getScreens(String cinemaId);
 	
 	public int getTicketsCount(String userNumber, String cinemaId, String sessionId, String showTime);
+
 }

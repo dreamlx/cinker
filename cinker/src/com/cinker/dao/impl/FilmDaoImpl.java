@@ -100,10 +100,10 @@ public class FilmDaoImpl extends BaseDaoImpl implements FilmDao{
 	}
 
 	@Override
-	public void updateOrderSuccess(int status,Date endTime,String bookingNumber,String bookingId,String orderNumber) {
+	public void updateOrderSuccess(int status,Date endTime,String bookingNumber,String bookingId,String vistaTransNumber,String orderNumber) {
 		// TODO Auto-generated method stub
-		String sql="update cinker_order set Status=?,endTime=?,BookingNumber=?,BookingID=? where OrderNumber=?";
-		update(sql,status,endTime,bookingNumber,bookingId,orderNumber);
+		String sql="update cinker_order set Status=?,endTime=?,BookingNumber=?,BookingID=?,VistaTransNumber=? where OrderNumber=?";
+		update(sql,status,endTime,bookingNumber,bookingId,vistaTransNumber,orderNumber);
 	}
 
 	@Override

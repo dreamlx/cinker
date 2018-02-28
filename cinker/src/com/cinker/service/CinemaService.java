@@ -96,11 +96,11 @@ public interface CinemaService {
 
 	public List<Payment> getSearchPayment(String userNickName,String orderNumber,String paymentID,String beginTime,String endTime,Integer page);
 	
-	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,String beginTime, String endTime, String scheduledFilmId,String beginShowTime, String endShowTime,Integer page,String submit1,String submit2,String cinemaId);
+	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,String beginTime, String endTime, String vistaTransNumber,String beginShowTime, String endShowTime,String status,Integer page,String submit1,String submit2,String cinemaId);
 
 	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,
-			String beginTime, String endTime, String scheduledFilmId,
-			String beginShowTime, String endShowTime,String cinemaId);
+			String beginTime, String endTime, String vistaTransNumber,
+			String beginShowTime, String endShowTime,String status,String cinemaId);
 	
 	public Payment findPaymentInformation(String paymentID);
 	
@@ -135,4 +135,11 @@ public interface CinemaService {
 	public List<UserVipMember> getSearchUserVipMember(String phone, String areaNumber,Integer page,String submit1,String submit2);
 
 	public List<ActivityFilm> getSearchActivityFilm(String filmId, String filmTitle,Integer page);
+
+	int findOrderCount(String orderNumber, String filmTitle, String beginTime, String endTime, String vistaTransNumber,
+			String beginShowTime, String endShowTime,String status, Integer page, String submit1, String submit2, String cinemaId);
+	
+	int findOrderCount(String orderNumber, String filmTitle,
+			String beginTime, String endTime, String vistaTransNumber,
+			String beginShowTime, String endShowTime,String status,String cinemaId);
 }

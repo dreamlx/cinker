@@ -339,7 +339,7 @@ public class ActivityAction {
 			if(filmOrder.getOrderType()==2 && acp!=null){
 				paymentService.updatePaymentStatus(Payment.PAYMENT_STATUS_SUCCESS,new Date(),orderId);
 				//更改本地数据库的订单信息
-				filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),"","",orderId);
+				filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),"","","",orderId);
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				activityService.updateActivityPersonal(Payment.PAYMENT_STATUS_SUCCESS,sdf.format(new Date()), orderId);
 			}
@@ -571,7 +571,7 @@ public class ActivityAction {
 			 if(filmOrder.getOrderType()==2 && acp!=null){
 				 paymentService.updatePaymentStatus(Payment.PAYMENT_STATUS_SUCCESS,new Date(),tradeno);
 				//更改本地数据库的订单信息
-				 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),"","",tradeno);
+				 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),"","","",tradeno);
 				 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				 activityService.updateActivityPersonal(Payment.PAYMENT_STATUS_SUCCESS,sdf.format(new Date()), tradeno);
 			 }

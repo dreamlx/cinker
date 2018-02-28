@@ -103,7 +103,7 @@ public class MemberAction {
 			//Vista交易单号
 			String transNumber = resultJson.getString("VistaTransNumber");
 			//更改本地数据库的订单信息
-			filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,outTradeNo);
+			filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,transNumber,outTradeNo);
 			userMemberService.updateUserVipPaymentByOrderNumber(Payment.PAYMENT_STATUS_SUCCESS,new Date(), outTradeNo);
 			paymentService.updatePaymentStatus(Payment.PAYMENT_STATUS_FAIL,new Date(),outTradeNo);
 			FilmOrder filmOrder = filmService.getFilmOrder(outTradeNo);

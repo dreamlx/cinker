@@ -30,6 +30,8 @@ public class FilmOrder implements Serializable{
 	private int paymentId;
 	private String bookingNumber;//取票码
 	private String bookingID;//验证码
+	// vista交易号
+	private String vistaTransNumber;
 	private String seat;
 	private int    paymentStatus;
 	private String englishName;
@@ -241,6 +243,12 @@ public class FilmOrder implements Serializable{
 	}
 	public void setMemberLevelId(String memberLevelId) {
 		this.memberLevelId = memberLevelId;
+	}
+	public String getVistaTransNumber() {
+		return vistaTransNumber;
+	}
+	public void setVistaTransNumber(String vistaTransNumber) {
+		this.vistaTransNumber = vistaTransNumber;
 	}
 	
 

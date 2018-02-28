@@ -21,6 +21,7 @@ public class FilmOrders implements Serializable{
 	private int status;
 	private int totalOrderCount;
 	private String totalValueCents;
+	private String unitPrice;
 	private String startTime;
 	private String endTime;	
 	private String userNumber;
@@ -212,6 +213,12 @@ public class FilmOrders implements Serializable{
 	}
 	public void setVistaTransNumber(String vistaTransNumber) {
 		this.vistaTransNumber = vistaTransNumber;
+	}
+	public String getUnitPrice() {
+		return unitPrice;
+	}
+	public void setUnitPrice(String unitPrice) {
+		this.unitPrice = unitPrice;
 	}
 
 	

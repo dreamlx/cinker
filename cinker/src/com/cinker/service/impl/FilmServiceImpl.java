@@ -314,12 +314,12 @@ public class FilmServiceImpl implements FilmService{
 	}
 	
 	
-
+	// TODO 需要增加vista交易号
 	@Override
 	public void updateOrderSuccess(int status, Date endTime,
-			String bookingNumber, String bookingId, String orderNumber) {
+			String bookingNumber, String bookingId, String vistaTransNumber, String orderNumber) {
 		// TODO Auto-generated method stub
-		filmDao.updateOrderSuccess(status, endTime, bookingNumber, bookingId, orderNumber);
+		filmDao.updateOrderSuccess(status, endTime, bookingNumber, bookingId, vistaTransNumber, orderNumber);
 	}	
 
 	@Override

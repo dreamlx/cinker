@@ -34,7 +34,7 @@ public interface FilmService {
 	
 	public FilmOrder getFilmOrder(String orderNumber);
 	
-	public void updateOrderSuccess(int status,Date endTime,String bookingNumber,String bookingId,String orderNumber);
+	public void updateOrderSuccess(int status,Date endTime,String bookingNumber,String bookingId,String vistaTransNumber,String orderNumber);
 	
 	public void cancleOrder(int status,String id);
 
@@ -55,4 +55,5 @@ public interface FilmService {
 	public int getTicketsCount(String userNumber, String cinemaId, String sessionId, String showTime);
 	
 	public int getRestTickets(String userNumber, String memberLevelId, String cinemaId, String cinemaType, String sessionId, String sessionShowTime, String showTime);
+
 }

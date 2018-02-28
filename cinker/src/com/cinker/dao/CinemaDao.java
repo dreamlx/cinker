@@ -120,13 +120,13 @@ public interface CinemaDao {
 
 	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,
 			String beginTime, String endTime, String scheduledFilmId,
-			String beginShowTime, String endShowTime,Integer page,String submit1,String submit2,String cinemaId);
+			String beginShowTime, String endShowTime,String status,Integer page,String submit1,String submit2,String cinemaId);
 	
 	public void updatePaymentTransactionId(String transactionId, String orderNumber);
 
 	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,
 			String beginTime, String endTime, String scheduledFilmId,
-			String beginShowTime, String endShowTime,String cinemaId);
+			String beginShowTime, String endShowTime,String status,String cinemaId);
 
 	public List<Payment> getPaymentUserNickName(String orderNumber);
 	
@@ -139,4 +139,11 @@ public interface CinemaDao {
 	public List<UserVipMember> getSearchUserVipMember(String phone, String areaNumber,Integer page,String submit1,String submit2);
 	
 	public List<ActivityFilm> getSearchActivityFilm(String filmId, String filmTitle,Integer page);
+
+	int findOrderCount(String orderNumber, String filmTitle,
+			String beginTime, String endTime, String scheduledFilmId,
+			String beginShowTime, String endShowTime,String status,Integer page,String submit1,String submit2,String cinemaId);
+
+	int findOrderCount(String orderNumber, String filmTitle, String beginTime, String endTime, String scheduledFilmId,
+			String beginShowTime, String endShowTime, String status, String cinemaId);
 }

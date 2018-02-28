@@ -37,7 +37,8 @@ public class ExportExcelUtils {
     }  
       
     // 导出数据  
-    public void exportData(){  
+    public void exportData(){ 
+    	OutputStream out = null;
         try {  
             HSSFWorkbook workbook =new HSSFWorkbook(); // 创建一个excel对象  
             HSSFSheet sheet =workbook.createSheet(title); // 创建表格  
@@ -113,15 +114,25 @@ public class ExportExcelUtils {
                         String fileName11 = URLEncoder.encode(fileName,"UTF-8");  
                         String headStr = "attachment; filename=\"" + fileName11 + "\"";    
                         response.setContentType("APPLICATION/OCTET-STREAM");    
-                        response.setHeader("Content-Disposition", headStr);    
-                        OutputStream out = response.getOutputStream();    
-                        workbook.write(out);  
-                        out.flush();  
-                        out.close();  
+                        response.setHeader("Content-Disposition", headStr);
+                        out = response.getOutputStream();    
+                        workbook.write(out);    
                     }    
                     catch (IOException e)    
                     {    
                         e.printStackTrace();    
+                    }finally {
+                    	if(null!=out) {
+            		    	try {
+            		    		out.flush();
+            		    		out.close();
+            		    		out=null;
+            		    		response.flushBuffer();
+            				} catch (IOException e) {
+            					// TODO Auto-generated catch block
+            					e.printStackTrace();
+            				}	    		
+                		}
                     }   
                       
                 }    

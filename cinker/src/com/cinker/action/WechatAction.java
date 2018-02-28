@@ -273,8 +273,10 @@ public class WechatAction {
 				 String bookingNumber = resultJson.getString("VistaBookingNumber");
 				 //验证码
 				 String bookingId = resultJson.getString("VistaBookingId");
+				 //Vista交易单号
+				 String vistaTransNumber = resultJson.getString("VistaTransNumber");
 				 //更改本地数据库的订单信息
-				 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,tradeno);
+				 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,vistaTransNumber,tradeno);
 			 } else {
 				 logger.info("******PaySuccess方法中,完成订单失败,request =["+ jsonParam.toString() + "]");
 				 logger.info("******PaySuccess方法中,完成订单失败,Result =["+ result + "]");
@@ -417,8 +419,10 @@ public class WechatAction {
 				 String bookingNumber = resultJson.getString("VistaBookingNumber");
 				 //验证码
 				 String bookingId = resultJson.getString("VistaBookingId");
+				 //Vista交易单号
+				 String vistaTransNumber = resultJson.getString("VistaTransNumber");
 				 //更改本地数据库的订单信息
-				 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,outTradeNo);
+				 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,vistaTransNumber,outTradeNo);
 
 				 filmOrder = filmService.getFilmOrder(outTradeNo);
 				 String[] str = filmOrder.getShowTime().split(" ");
@@ -489,7 +493,7 @@ public class WechatAction {
 							Payment payment = payments.get(0);
 							if(payment.getStatus() != Payment.PAYMENT_STATUS_SUCCESS){
 								paymentService.updatePaymentStatus(Payment.PAYMENT_STATUS_FAIL,new Date(),orderNumber);
-								filmService.updateOrderSuccess(Payment.PAYMENT_STATUS_FAIL,new Date(),"","",orderNumber);
+								filmService.updateOrderSuccess(Payment.PAYMENT_STATUS_FAIL,new Date(),"","","",orderNumber);
 							}
 						}
 					}
@@ -498,7 +502,7 @@ public class WechatAction {
 							Payment payment = payments.get(0);
 							if(payment.getStatus() != Payment.PAYMENT_STATUS_SUCCESS){
 								paymentService.updatePaymentStatus(Payment.PAYMENT_STATUS_FAIL,new Date(),orderNumber);
-								filmService.updateOrderSuccess(Payment.PAYMENT_STATUS_FAIL,new Date(),"","",orderNumber);
+								filmService.updateOrderSuccess(Payment.PAYMENT_STATUS_FAIL,new Date(),"","","",orderNumber);
 							}
 						}
 						if(activityPersonal!=null){
@@ -547,11 +551,13 @@ public class WechatAction {
 									 String bookingNumber=resultJson.getString("VistaBookingNumber");
 									 //验证码
 									 String bookingId=resultJson.getString("VistaBookingId");
+									 //Vista交易单号
+									 String vistaTransNumber = resultJson.getString("VistaTransNumber");
 									 //更改本地数据库的订单信息
-									 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,orderNumber);
+									 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,vistaTransNumber,orderNumber);
 									 FilmOrder filmOrders = filmService.getFilmOrder(orderNumber);
 									 if(filmOrders.getBookingID() == null || "".equals(filmOrders.getBookingID())){
-										filmService.updateOrderSuccess(Payment.PAYMENT_STATUS_SUCCESS,new Date(),bookingNumber,bookingId,orderNumber);
+										filmService.updateOrderSuccess(Payment.PAYMENT_STATUS_SUCCESS,new Date(),bookingNumber,bookingId,vistaTransNumber,orderNumber);
 									 }
 								 } else {
 									 logger.info("******回调时完成订单失败,orderNumber =["+ orderNumber + "]");
@@ -565,7 +571,7 @@ public class WechatAction {
 						Payment payment = payments.get(0);
 						if(payment.getStatus() != Payment.PAYMENT_STATUS_SUCCESS){
 							paymentService.updatePaymentStatus(Payment.PAYMENT_STATUS_SUCCESS,new Date(),orderNumber);
-							filmService.updateOrderSuccess(Payment.PAYMENT_STATUS_SUCCESS,new Date(),"","",orderNumber);
+							filmService.updateOrderSuccess(Payment.PAYMENT_STATUS_SUCCESS,new Date(),"","","",orderNumber);
 						}
 					}
 					

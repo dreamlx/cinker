@@ -154,8 +154,10 @@ public class WechatPayAction{
 			 String bookingNumber=resultJson.getString("VistaBookingNumber");
 			 //验证码
 			 String bookingId=resultJson.getString("VistaBookingId");
+			 //Vista交易单号
+			 String vistaTransNumber = resultJson.getString("VistaTransNumber");
 			 //更改本地数据库的订单信息
-			 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,tradeno);
+			 filmService.updateOrderSuccess(FilmOrder.ORDER_SUCCESS,new Date(),bookingNumber,bookingId,vistaTransNumber,tradeno);
 		 }
 		 filmOrder=filmService.getFilmOrder(tradeno);
 		 String[] str = filmOrder.getShowTime().split(" ");

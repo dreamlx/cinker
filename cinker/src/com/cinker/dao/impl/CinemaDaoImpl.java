@@ -1,8 +1,5 @@
 package com.cinker.dao.impl;
 
-
-
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.ResultSet;
@@ -29,10 +26,6 @@ import com.cinker.model.Payment;
 import com.cinker.model.Screen;
 import com.cinker.model.UserMember;
 import com.cinker.model.UserVipMember;
-
-
-
-
 
 @SuppressWarnings("rawtypes")
 @Repository
@@ -593,22 +586,60 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 			return null;
 		}
 	}
+	
+	@Override
+	public int findOrderCount(String orderNumber, String filmTitle, String beginTime, String endTime,
+			String vistaTransNumber, String beginShowTime, String endShowTime, String status, Integer page, 
+			String submit1,String submit2, String cinemaId) {
+		try{
+			StringBuffer sb = new StringBuffer("SELECT count(*) FROM cinker_order co inner join cinker_user_member um "
+					+ "on co.UserNumber = um.UserNumber WHERE 1=1 ");
+			if(!StringUtils.isEmpty(orderNumber)){
+				sb.append("AND OrderNumber like '%" + orderNumber +"%'");
+			}
+			if(!StringUtils.isEmpty(filmTitle)){
+				sb.append("AND FilmTitle like '%" + filmTitle +"%'");
+			}
+			if(!StringUtils.isEmpty(vistaTransNumber)){
+				sb.append("AND VistaTransNumber like '%" + vistaTransNumber +"%'");
+			}
+			if(!StringUtils.isEmpty(status)){
+				sb.append("AND Status like '%" + status +"%'");
+			}
+			if(!StringUtils.isEmpty(beginTime) && !StringUtils.isEmpty(endTime)){
+				sb.append("AND EndTime BETWEEN '"+ beginTime +"' AND '" + endTime +"'");
+			}
+			if(!StringUtils.isEmpty(beginShowTime) && !StringUtils.isEmpty(endShowTime)){
+				sb.append("AND ShowTime BETWEEN '"+ beginShowTime +"' AND '" + endShowTime +"'");
+			}
+			if(!StringUtils.isEmpty(cinemaId)){
+				sb.append("AND CinemaId like '%" + cinemaId +"%'");
+			}
+			return jdbcTemplate.queryForObject(sb.toString(), Integer.class);
+		}catch(EmptyResultDataAccessException e){
+			return 0;
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,
-			String beginTime, String endTime, String scheduledFilmId ,String beginShowTime,String endShowTime,Integer page,String submit1,String submit2,String cinemaId) {
+			String beginTime, String endTime, String vistaTransNumber ,String beginShowTime,
+			String endShowTime,String status,Integer page,String submit1,String submit2,String cinemaId) {
 		try{
-			StringBuffer sb = new StringBuffer("SELECT um.UserName,um.UserNickName,um.MobilePhone,co.* FROM cinker_order co,cinker_user_member um ");
-			sb.append(" WHERE 1=1 AND um.UserNumber = co.UserNumber ");
-			if(orderNumber != null){
+			StringBuffer sb = new StringBuffer("SELECT um.UserName,um.UserNickName,um.MobilePhone,co.* FROM cinker_order co inner join cinker_user_member um on um.UserNumber = co.UserNumber");
+			sb.append(" WHERE 1=1 ");
+			if(!StringUtils.isEmpty(orderNumber)){
 				sb.append("AND OrderNumber like '%" + orderNumber +"%'");
 			}
-			if(filmTitle != null){
+			if(!StringUtils.isEmpty(filmTitle)){
 				sb.append("AND FilmTitle like '%" + filmTitle +"%'");
 			}
-			if(scheduledFilmId != null){
-				sb.append("AND ScheduledFilmId like '%" + scheduledFilmId +"%'");
+			if(!StringUtils.isEmpty(vistaTransNumber)){
+				sb.append("AND VistaTransNumber like '%" + vistaTransNumber +"%'");
+			}
+			if(!StringUtils.isEmpty(status)){
+				sb.append("AND Status like '%" + status +"%'");
 			}
 			if(!StringUtils.isEmpty(beginTime) && !StringUtils.isEmpty(endTime)){
 				sb.append("AND EndTime BETWEEN '"+ beginTime +"' AND '" + endTime +"'");
@@ -633,18 +664,23 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,
-			String beginTime, String endTime, String scheduledFilmId ,String beginShowTime,String endShowTime,String cinemaId) {
+			String beginTime, String endTime,String vistaTransNumber ,
+			String beginShowTime,String endShowTime,String status,
+			String cinemaId) {
 		try{
-			StringBuffer sb = new StringBuffer("SELECT um.UserName,um.UserNickName,um.MobilePhone,co.* FROM cinker_order co,cinker_user_member um ");
-			sb.append(" WHERE 1=1 AND um.UserNumber = co.UserNumber ");
-			if(orderNumber != null){
+			StringBuffer sb = new StringBuffer("SELECT um.UserName,um.UserNickName,um.MobilePhone,co.* FROM cinker_order co inner join cinker_user_member um on um.UserNumber = co.UserNumber");
+			sb.append(" WHERE 1=1 ");
+			if(!StringUtils.isEmpty(orderNumber)){
 				sb.append("AND OrderNumber like '%" + orderNumber +"%'");
 			}
-			if(filmTitle != null){
+			if(!StringUtils.isEmpty(filmTitle)){
 				sb.append("AND FilmTitle like '%" + filmTitle +"%'");
 			}
-			if(scheduledFilmId != null){
-				sb.append("AND ScheduledFilmId like '%" + scheduledFilmId +"%'");
+			if(!StringUtils.isEmpty(vistaTransNumber)){
+				sb.append("AND VistaTransNumber like '%" + vistaTransNumber +"%'");
+			}
+			if(!StringUtils.isEmpty(status)){
+				sb.append("AND Status like '%" + status +"%'");
 			}
 			if(!StringUtils.isEmpty(beginTime) && !StringUtils.isEmpty(endTime)){
 				sb.append("AND EndTime BETWEEN '"+ beginTime +"' AND '" + endTime +"'");
@@ -659,6 +695,42 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 			return jdbcTemplate.query(sb.toString(),new BeanPropertyRowMapper(FilmOrders.class));
 		}catch(EmptyResultDataAccessException e){
 			return null;
+		}
+	}
+	
+	@Override
+	public int findOrderCount(String orderNumber, String filmTitle,
+			String beginTime, String endTime, String vistaTransNumber 
+			,String beginShowTime,String endShowTime,String status,
+			String cinemaId) {
+		try{
+			StringBuffer sb = new StringBuffer("SELECT count(*) FROM cinker_order co inner join cinker_user_member um "
+					+ "on co.UserNumber = um.UserNumber WHERE 1=1 ");
+			if(!StringUtils.isEmpty(orderNumber)){
+				sb.append("AND OrderNumber like '%" + orderNumber +"%'");
+			}
+			if(!StringUtils.isEmpty(filmTitle)){
+				sb.append("AND FilmTitle like '%" + filmTitle +"%'");
+			}
+			if(!StringUtils.isEmpty(vistaTransNumber)){
+				sb.append("AND VistaTransNumber like '%" + vistaTransNumber +"%'");
+			}
+			if(!StringUtils.isEmpty(status)){
+				sb.append("AND Status like '%" + status +"%'");
+			}
+			if(!StringUtils.isEmpty(beginTime) && !StringUtils.isEmpty(endTime)){
+				sb.append("AND EndTime BETWEEN '"+ beginTime +"' AND '" + endTime +"'");
+			}
+			if(!StringUtils.isEmpty(beginShowTime) && !StringUtils.isEmpty(endShowTime)){
+				sb.append("AND ShowTime BETWEEN '"+ beginShowTime +"' AND '" + endShowTime +"'");
+			}
+			if(!StringUtils.isEmpty(cinemaId)){
+				sb.append("AND CinemaId like '%" + cinemaId +"%'");
+			}
+			sb.append(" ORDER BY StartTime DESC");
+			return jdbcTemplate.queryForObject(sb.toString(), Integer.class);
+		}catch(EmptyResultDataAccessException e){
+			return 0;
 		}
 	}
 
