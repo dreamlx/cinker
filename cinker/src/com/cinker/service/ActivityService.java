@@ -19,8 +19,12 @@ public interface ActivityService {
 	
 	public ActivityPersonal getActivityPersonalbyorderNumber(String orderNumber);
 	
-	public List<ActivityPersonal> getActivityPersonalByActivityId(String activityId,Integer page);
+	public List<ActivityPersonal> getActivityPersonal(String activityId,String sessionTime,
+			String name,String phone,String filmTitle,String cinemaId,Integer page); 
 
 	public void updateActivityPersonalStatus();
+
+	int getActivityPersonalCount(String activityId, String sessionTime, String name, String phone, String filmTitle,
+			String cinemaId);
 	
 }

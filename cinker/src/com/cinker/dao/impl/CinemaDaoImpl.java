@@ -2,6 +2,7 @@ package com.cinker.dao.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -384,7 +385,7 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 					userMember.setLoginTime(rs.getDate("LoginTime"));
 					userMember.setOpenID(rs.getString("OpenID"));
 					userMember.setUserHeadImageUrl(rs.getString("UserHeadImageUrl"));
-					userMember.setUserNickName(rs.getString("UserNickName"));
+					userMember.setUserNickName((rs.getString("UserNickName")));
 					userMember.setUserNumber(rs.getString("UserNumber"));
 					userMember.setUserSex(rs.getInt("UserSex"));
 					userMember.setVistaMemberCardNumber(rs.getString("VistaMemberCardNumber"));
@@ -531,22 +532,62 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 			return null;
 		}
 	}
-
+		
+	@Override
+	public int findPaymentCount(String userNickName,String orderNumber, String paymentID, String beginTime,String endTime,Integer page) {
+		try{
+			StringBuffer sb = new StringBuffer("SELECT COUNT(*) ");
+			sb.append("from  cinker_user_member um INNER JOIN cinker_order o ON um.UserNumber = o.UserNumber INNER JOIN cinker_order_payment op ON op.OrderNumber = o.OrderNumber "
+					+ "WHERE 1=1 ");
+			if(!StringUtils.isEmpty(userNickName)){
+				try {
+					userNickName = URLEncoder.encode(userNickName, "utf-8");
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				sb.append(" AND um.UserNickName like '%" + userNickName +"%'");
+			}
+			if(!StringUtils.isEmpty(orderNumber)){
+				sb.append(" AND o.OrderNumber like '%" + orderNumber +"%'");
+			}
+			if(!StringUtils.isEmpty(paymentID)){
+				sb.append(" AND o.PaymentID like '%" + paymentID +"%'");
+			}
+			if(!StringUtils.isEmpty(beginTime) && !StringUtils.isEmpty(endTime)){
+				sb.append(" AND o.EndTime BETWEEN '"+ beginTime +"' AND '" + endTime +"'");
+			}
+			sb.append(" ORDER BY o.EndTime DESC ");
+			if( null != page ){
+				if (0 != page)
+					sb.append(" LIMIT "+(page-1)*pageSize +","+pageSize +"");
+			}
+			return jdbcTemplate.queryForObject(sb.toString(),Integer.class);
+		}catch(EmptyResultDataAccessException e){
+			return 0;
+		}
+	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Payment> getSearchPayment(String userNickName,String orderNumber, String paymentID, String beginTime,String endTime) {
 		try{
 			StringBuffer sb = new StringBuffer("SELECT um.UserNickName,op.Type, o.OrderNumber, o.Status, o.EndTime, o.PaymentID,op.StartTime,op.PaymentPrice,op.TransactionId ");
-			sb.append("from  cinker_user_member um,  cinker_order o, cinker_order_payment op WHERE 1=1 and um.UserNumber = o.UserNumber " +
-					"and op.OrderNumber = o.OrderNumber ");
-			if(userNickName != null){
-				sb.append("AND um.UserNickName like '%" + userNickName +"%'");
+			sb.append("from  cinker_user_member um INNER JOIN cinker_order o ON um.UserNumber = o.UserNumber INNER JOIN cinker_order_payment op ON op.OrderNumber = o.OrderNumber "
+					+ "WHERE 1=1 ");
+			if(!StringUtils.isEmpty(userNickName)){
+				try {
+					userNickName = URLEncoder.encode(userNickName, "utf-8");
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				sb.append(" AND um.UserNickName like '%" + userNickName +"%'");
 			}
-			if(orderNumber != null){
-				sb.append("AND o.OrderNumber like '%" + orderNumber +"%'");
+			if(!StringUtils.isEmpty(orderNumber)){
+				sb.append(" AND o.OrderNumber like '%" + orderNumber +"%'");
 			}
-			if(paymentID != null){
-				sb.append("AND o.PaymentID like '%" + paymentID +"%'");
+			if(!StringUtils.isEmpty(paymentID)){
+				sb.append(" AND o.PaymentID like '%" + paymentID +"%'");
 			}
 			if(!StringUtils.isEmpty(beginTime) && !StringUtils.isEmpty(endTime)){
 				sb.append("AND o.EndTime BETWEEN '"+ beginTime +"' AND '" + endTime +"'");
@@ -563,9 +604,15 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 	public List<Payment> getSearchPayment(String userNickName,String orderNumber, String paymentID, String beginTime,String endTime,Integer page) {
 		try{
 			StringBuffer sb = new StringBuffer("SELECT um.UserNickName,op.Type, o.OrderNumber, o.Status, o.EndTime, o.PaymentID,op.StartTime,op.PaymentPrice,op.TransactionId ");
-			sb.append("from  cinker_user_member um,  cinker_order o, cinker_order_payment op WHERE 1=1 and um.UserNumber = o.UserNumber " +
-					"and op.OrderNumber = o.OrderNumber ");
+			sb.append("from  cinker_user_member um INNER JOIN cinker_order o ON um.UserNumber = o.UserNumber INNER JOIN cinker_order_payment op ON op.OrderNumber = o.OrderNumber "
+					+ "WHERE 1=1 ");
 			if(userNickName != null){
+				try {
+					userNickName = URLEncoder.encode(userNickName, "utf-8");
+				} catch (UnsupportedEncodingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				sb.append(" AND um.UserNickName like '%" + userNickName +"%'");
 			}
 			if(orderNumber != null){
@@ -578,8 +625,9 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 				sb.append(" AND o.EndTime BETWEEN '"+ beginTime +"' AND '" + endTime +"'");
 			}
 			sb.append(" ORDER BY o.EndTime DESC ");
-			if(page != 0 && page!= null){
-				sb.append(" LIMIT "+(page-1)*pageSize +","+pageSize +"");
+			if(null != page){
+				if(0 != page)
+					sb.append(" LIMIT "+(page-1)*pageSize +","+pageSize +"");
 			}
 			return jdbcTemplate.query(sb.toString(),new BeanPropertyRowMapper(Payment.class));
 		}catch(EmptyResultDataAccessException e){
@@ -740,7 +788,7 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 			String sql = "SELECT COUNT(*) FROM cinker_film WHERE FilmId = ?";
 			return jdbcTemplate.queryForObject(sql, new Object[]{filmId}, Integer.class);
 		}catch(EmptyResultDataAccessException e){
-			return (Integer) null;
+			return 0;
 		}
 		
 	}
@@ -892,32 +940,11 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ActivityPersonal> getActivityPersonal(Integer page) {
-		try{
-			String sql = "";
-			if(page == null || page == 0){
-				sql = "SELECT * FROM cinker_activity_personal WHERE Status = 1 ORDER BY DateTime DESC";
-			}else {
-				sql = "SELECT * FROM cinker_activity_personal WHERE Status = 1 ORDER BY DateTime DESC LIMIT " + (page-1)*pageSize +","+pageSize +"";
-			}
-			return jdbcTemplate.query(sql, new BeanPropertyRowMapper(ActivityPersonal.class));
-		}catch(EmptyResultDataAccessException e){
-			return null;
-		}
-	}
 
 	@Override
 	public void updatePaymentTransactionId(String transactionId, String orderNumber) {
 		String sql = "UPDATE cinker_order_payment SET TransactionId = ? WHERE OrderNumber = ?";
 		update(sql,transactionId,orderNumber );
-	}
-
-	@Override
-	public int getActivityPersonalCount() {
-		String sql = "SELECT COUNT(*) FROM cinker_activity_personal WHERE Status = 1";
-		return jdbcTemplate.queryForObject(sql, Integer.class);
 	}
 
 	@Override
@@ -1011,21 +1038,54 @@ public class CinemaDaoImpl extends BaseDaoImpl implements CinemaDao{
 		}
 	}
 
+	public int findActivityFilmCount(String filmId, String filmTitle, String sessionTime, String cinemaId) {
+		try{
+			StringBuffer sb = new StringBuffer("SELECT COUNT(*) FROM cinker_activity_film ca INNER JOIN cinker_cinema cc ON ca.CinemaId = cc.CinemaId"
+					+ " WHERE 1=1 ");
+			if(!StringUtils.isEmpty(filmId)){
+				sb.append(" AND FilmId = '" + filmId +"' ");
+			}
+			if(!StringUtils.isEmpty(filmTitle)){
+				sb.append(" AND FilmTitle like '%" + filmTitle +"%' ");
+			}
+			if(!StringUtils.isEmpty(sessionTime)){
+				sb.append(" AND sessionTime like '%" + sessionTime +"%' ");
+			}
+			if(!StringUtils.isEmpty(cinemaId)){
+				sb.append(" AND ca.cinemaId = '" + cinemaId +"' ");
+			}
+			sb.append(" ORDER BY sessionTime DESC");
+			return jdbcTemplate.queryForObject(sb.toString(), Integer.class);
+		}catch(EmptyResultDataAccessException e){
+			return 0;
+		}
+	}
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivityFilm> getSearchActivityFilm(String filmId,
-			String filmTitle, Integer page) {
+			String filmTitle, String sessionTime, String cinemaId, Integer page) {
 		try{
-			StringBuffer sb = new StringBuffer("SELECT * FROM cinker_activity_film WHERE 1=1 ");
-			if(filmId != null){
-				sb.append(" AND FilmId like '%" + filmId +"%' ");
+			String columns = "ca.ID, FilmId, ca.CinemaId, SessionId, SessionName, SessionTime, FilmTitle, "
+					+ "ActivityFilmType, TotalValueCents, Total, Quaty, StartSessionTime, "
+					+ "Url, isForUpperMember, name";
+			StringBuffer sb = new StringBuffer("SELECT " +columns+ " FROM cinker_activity_film ca INNER JOIN cinker_cinema cc ON ca.CinemaId = cc.CinemaId"
+					+ " WHERE 1=1 ");
+			if(!StringUtils.isEmpty(filmId)){
+				sb.append(" AND FilmId = '" + filmId +"' ");
 			}
-			if(filmTitle != null){
+			if(!StringUtils.isEmpty(filmTitle)){
 				sb.append(" AND FilmTitle like '%" + filmTitle +"%' ");
 			}
-			sb.append(" ORDER BY ID DESC");
-			if(page != 0 && page!= null){
-				sb.append(" LIMIT "+(page-1)*pageSize +","+pageSize +"");
+			if(!StringUtils.isEmpty(sessionTime)){
+				sb.append(" AND sessionTime like '%" + sessionTime +"%' ");
+			}
+			if(!StringUtils.isEmpty(cinemaId)){
+				sb.append(" AND ca.cinemaId = '" + cinemaId +"' ");
+			}
+			sb.append(" ORDER BY sessionTime DESC");
+			if(null != page){
+				if(0 != page)
+					sb.append(" LIMIT "+(page-1)*pageSize +","+pageSize +"");
 			}
 			return jdbcTemplate.query(sb.toString(),new BeanPropertyRowMapper(ActivityFilm.class));
 		}catch(EmptyResultDataAccessException e){

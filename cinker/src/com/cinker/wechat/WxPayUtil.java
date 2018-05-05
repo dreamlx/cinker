@@ -68,8 +68,23 @@ public class WxPayUtil {
         return result;
     }
 	
-	public static void main(String[] args) throws Exception {
-		
-	}
+	public static String payRefund(String appid,String mchid,String apiKey,String out_trade_no
+			,String outRefundNo, int totalFee, int refundFee
+			,String refundNotifyUrl) {
+		SortedMap<Object,Object> paramMap = new TreeMap<Object,Object>();
+        paramMap.put("appid",appid);
+        paramMap.put("mch_id",mchid);
+        paramMap.put("nonce_str",PayCommonUtil.CreateNoncestr()); 
+        paramMap.put("out_trade_no",out_trade_no);
+        paramMap.put("out_refund_no",outRefundNo);
+        paramMap.put("total_fee",totalFee);
+        paramMap.put("refund_fee",refundFee);
+        paramMap.put("notify_url",refundNotifyUrl);
+        paramMap.put("sign", PayCommonUtil.createSign(paramMap,apiKey));
+         
+        String xmlData = PayCommonUtil.getRequestXml(paramMap);        
+        String result = CommonUtil.certificateHttps(ConfigUtil.REFUND_URL, xmlData, ConfigUtil.CERTIFICATE_PATH);
+        return result;
+    }
 
 }

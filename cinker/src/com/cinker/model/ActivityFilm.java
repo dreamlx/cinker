@@ -9,6 +9,7 @@ public class ActivityFilm implements Serializable{
 	
 	private String id;
 	private String cinemaId;
+	private String name;
 	private String sessionId;
 	private String filmId;
 	private String sessionName;
@@ -156,6 +157,12 @@ public class ActivityFilm implements Serializable{
 	}
 	public void setIsForUpperMember(Integer isForUpperMember) {
 		this.isForUpperMember = isForUpperMember;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	

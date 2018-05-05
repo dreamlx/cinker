@@ -13,6 +13,7 @@ public class ActivityPersonal implements Serializable{
 	private String startTime;
 	private String dateTime;
 	private String cinemaId;
+	private String cinemaName;
 	private String nickeName;
 	private String activityId;
 	private Integer quaty;
@@ -106,6 +107,12 @@ public class ActivityPersonal implements Serializable{
 	}
 	public void setOrderEndTime(String orderEndTime) {
 		this.orderEndTime = orderEndTime;
+	}
+	public String getCinemaName() {
+		return cinemaName;
+	}
+	public void setCinemaName(String cinemaName) {
+		this.cinemaName = cinemaName;
 	}
 	
 	

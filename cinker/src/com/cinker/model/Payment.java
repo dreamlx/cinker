@@ -8,12 +8,13 @@ public class Payment implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 6634380618143287979L;
-	public  static final int  PAYMENT_WECHAT=1;
-	public  static final int  PAYMENT_ECARD=2;
-	public  static final int  PAYMENT_STATUS_INIT=0;
-	public  static final int  PAYMENT_STATUS_SUCCESS=1;
-	public  static final int  PAYMENT_STATUS_FAIL=2;
-	public  static final int  PAYMENT_STATUS_OVERTIME=3;
+	public static final int PAYMENT_WECHAT = 1;
+	public static final int PAYMENT_ECARD = 2;
+	public static final int PAYMENT_STATUS_INIT = 0;
+	public static final int PAYMENT_STATUS_SUCCESS = 1;
+	public static final int PAYMENT_STATUS_FAIL = 2;
+	public static final int PAYMENT_STATUS_OVERTIME = 3;
+	public static final int PAYMENT_STATUS_BACK = 4;
 	private int paymentID;//编号
 	private int type;//支付类型  1:微信支付  2：会员卡支付
 	private int status;//0:未支付  1：支付成功 2：支付失败

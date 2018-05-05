@@ -39,6 +39,7 @@
 											
 										</div>
 									</div>
+									<br /><br />
 									<div class=" col-lg-6 col-md-6 no-padding  ">
 										<div class="col-lg-8 margin-top-10 text-align-right no-padding padding-right-5">开始时间</div>
 							    		<div class="col-lg-12 input-group">
@@ -133,7 +134,7 @@
 	                                		<c:when test="${pages.totalPage == 1}">
 		                                		<a href="${pageContext.request.contextPath}/cinkerMaintain/getSearchPayment?userNickName=${userNickName}&orderNumber=${orderNumber}&paymentID=${paymentID}&beginTime=${beginTime}&endTime=${endTime}&submit1=${submit1}&page=${pages.page}" id="1">${pages.page}</a>
 		                                	</c:when>
-		                                	<c:when test="${pages.totalPage == 2}">
+		                                	<c:when test="${pcxcccccccccccccccccccccages.totalPage == 2}">
 		                                		<a href="${pageContext.request.contextPath}/cinkerMaintain/getSearchPayment?userNickName=${userNickName}&orderNumber=${orderNumber}&paymentID=${paymentID}&beginTime=${beginTime}&endTime=${endTime}&submit1=${submit1}&page=1" id="1">1</a>
 		                                		<a href="${pageContext.request.contextPath}/cinkerMaintain/getSearchPayment?userNickName=${userNickName}&orderNumber=${orderNumber}&paymentID=${paymentID}&beginTime=${beginTime}&endTime=${endTime}&submit1=${submit1}&page=2" id="2">2</a>
 		                                	</c:when>

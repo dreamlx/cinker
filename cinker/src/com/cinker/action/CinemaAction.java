@@ -206,16 +206,8 @@ public class CinemaAction {
 			String submit2,Integer page,Integer pagee) throws UnsupportedEncodingException{
 		List<Payment> paymentList = null;
 		Page pages = new Page();
-		if(!StringUtils.isEmpty(userNickName)){
-			userNickName = request.getParameter("userNickName");
-			userNickName = new String(userNickName.getBytes("iso8859-1"),"UTF-8");
-		}
-		if(!StringUtils.isEmpty(submit1)){
-			submit1 = request.getParameter("submit1");
-			submit1 = new String(submit1.getBytes("iso8859-1"),"UTF-8");
-		}
-		if(StringUtils.isEmpty(submit1)&&StringUtils.isEmpty(submit2)){
-			int total = cinemaService.getSearchPayment(userNickName, orderNumber, paymentID, beginTime, endTime).size();
+		if(StringUtils.isEmpty(submit1) && StringUtils.isEmpty(submit2)){
+			int total = cinemaService.findPaymentCount(userNickName, orderNumber, paymentID, beginTime, endTime, null);
 			int totalPage = total/pageSize;
 			if(total%pageSize != 0){
 				totalPage++;
@@ -241,7 +233,7 @@ public class CinemaAction {
 			pages.setPageSize(pageSize);
 		}
 		if(!StringUtils.isEmpty(submit1)){
-			int total = cinemaService.getSearchPayment(userNickName, orderNumber, paymentID, beginTime, endTime).size();
+			int total = cinemaService.findPaymentCount(userNickName, orderNumber, paymentID, beginTime, endTime, null);
 			int totalPage = total/pageSize;
 			if(total%pageSize != 0){
 				totalPage++;
@@ -787,17 +779,20 @@ public class CinemaAction {
 	
 	@RequestMapping(value="/getActivityFilmInfo" , method={GET , POST})
 	public String getActivityFilm(Model model,Integer page,Integer pagee,String filmId,String filmTitle,
-			String submit1,HttpServletRequest request) throws UnsupportedEncodingException{
-		if(!StringUtils.isEmpty(filmTitle)){
+			String sessionTime, String cinemaId, String submit1,HttpServletRequest request) throws UnsupportedEncodingException{
+		/*	提交中文乱码问题  由get提交造成	
+ 		* if(!StringUtils.isEmpty(filmTitle)){
 			filmTitle = request.getParameter("filmTitle");
 			filmTitle = new String(filmTitle.getBytes("iso8859-1"),"UTF-8");
-		}
-		
+		}*/
+		List<Cinema> cinemas = filmService.getCinemas();
+		model.addAttribute("cinemas", cinemas);
+		model.addAttribute("inCinemaId", cinemaId);
+		model.addAttribute("sessionTime", sessionTime);
 		List<ActivityFilm> activityFilm = null;
 		Page pages = new Page();
-		int total = cinemaService.getSearchActivityFilm(filmId, filmTitle, 0).size();
-		if(StringUtils.isEmpty(submit1)){
-			
+		int total = cinemaService.findActivityFilmCount(filmId, filmTitle, sessionTime, cinemaId);
+		if(StringUtils.isEmpty(submit1)){	
 			int totalPage = total/pageSize;
 			if(total%pageSize != 0){
 				totalPage++;
@@ -805,7 +800,7 @@ public class CinemaAction {
 			
 			if(pagee != null){
 				page = pagee;
-				activityFilm = cinemaService.getSearchActivityFilm(filmId, filmTitle, page)	;
+				activityFilm = cinemaService.getSearchActivityFilm(filmId, filmTitle, sessionTime, cinemaId, page)	;
 				if(activityFilm.size()>0){
 					for(int i =0; i<activityFilm.size();i++){
 						Integer activityFilmLists = cinemaService.findActicityFilmInfoByActivityId(activityFilm.get(i).getSessionId());
@@ -818,7 +813,7 @@ public class CinemaAction {
 				pages.setPage(page);
 			}
 			if(page != null){
-				activityFilm = cinemaService.getSearchActivityFilm(filmId, filmTitle, page)	;
+				activityFilm = cinemaService.getSearchActivityFilm(filmId, filmTitle, sessionTime, cinemaId, page);
 				if(activityFilm.size()>0){
 					for(int i =0; i<activityFilm.size();i++){
 						Integer activityFilmLists = cinemaService.findActicityFilmInfoByActivityId(activityFilm.get(i).getSessionId());
@@ -834,16 +829,14 @@ public class CinemaAction {
 			pages.setTotalPage(totalPage);
 			pages.setPageSize(pageSize);
 		}
-		if(!StringUtils.isEmpty(submit1)){
-			submit1 = request.getParameter("submit1");
-			submit1 = new String(submit1.getBytes("iso8859-1"),"UTF-8");
+		else {
 			int totalPage = total/pageSize;
 			if(total%pageSize != 0){
 				totalPage++;
 			}
 			if(pagee != null){
 				page = pagee;
-				activityFilm = cinemaService.getSearchActivityFilm(filmId, filmTitle, page)	;
+				activityFilm = cinemaService.getSearchActivityFilm(filmId, filmTitle, sessionTime, cinemaId, page);
 				if(activityFilm.size()>0){
 					for(int i =0; i<activityFilm.size();i++){
 						Integer activityFilmLists = cinemaService.findActicityFilmInfoByActivityId(activityFilm.get(i).getSessionId());
@@ -858,7 +851,7 @@ public class CinemaAction {
 				pagee = 1;
 			}
 			if(page != null){
-				activityFilm = cinemaService.getSearchActivityFilm(filmId, filmTitle, page)	;
+				activityFilm = cinemaService.getSearchActivityFilm(filmId, filmTitle, sessionTime, cinemaId, pagee);
 				if(activityFilm.size()>0){
 					for(int i =0; i<activityFilm.size();i++){
 						Integer activityFilmLists = cinemaService.findActicityFilmInfoByActivityId(activityFilm.get(i).getSessionId());
@@ -920,9 +913,18 @@ public class CinemaAction {
 	}
 	
 	@RequestMapping(value="/getActivityPersonal" , method={GET , POST})
-	public String getActivityPersonal(HttpServletRequest request,Model model,Integer page,String activityId,Integer pagee,String submit1,String submit2,HttpServletResponse response) throws UnsupportedEncodingException{
+	public String getActivityPersonal(HttpServletRequest request,Model model,Integer page,String activityId,Integer pagee,
+			String sessionTime,String name,String phone,String filmTitle,String cinemaId,
+			String submit1,String submit2,HttpServletResponse response) throws UnsupportedEncodingException{
 		List<ActivityPersonal> apFilmList = null;
-		int total = cinemaService.getActivityPersonalCount();
+		List<Cinema> cinemas = filmService.getCinemas();
+		model.addAttribute("cinemas", cinemas);
+		model.addAttribute("inCinemaId", cinemaId);
+		model.addAttribute("sessionTime", sessionTime);
+		model.addAttribute("name", name);
+		model.addAttribute("phone", phone);
+		model.addAttribute("filmTitle", filmTitle);
+		int total = activityService.getActivityPersonalCount(activityId, sessionTime, name, phone, filmTitle, cinemaId);
 		int totalPage = total/pageSize;
 		if(total%pageSize != 0){
 			totalPage++;
@@ -931,38 +933,22 @@ public class CinemaAction {
 		if(StringUtils.isEmpty(submit1) && StringUtils.isEmpty(submit2)){
 			if(pagee != null){
 				page = pagee;
-				apFilmList = cinemaService.getActivityPersonal(page);
-				for(ActivityPersonal ap:apFilmList){
-					ap.setNickeName(URLDecoder.decode(ap.getNickeName(), "utf-8"));
-				}
-				pages.setPage(page);
 			}
-			if(page != null){
-				apFilmList = cinemaService.getActivityPersonal(page);
-				for(ActivityPersonal ap:apFilmList){
-					ap.setNickeName(URLDecoder.decode(ap.getNickeName(), "utf-8"));
-				}
-				pages.setPage(page);
+			apFilmList = activityService.getActivityPersonal(activityId, sessionTime, name, phone, filmTitle, cinemaId, page);
+			for(ActivityPersonal ap:apFilmList){
+				ap.setNickeName(URLDecoder.decode(ap.getNickeName(), "utf-8"));
 			}
+			pages.setPage(page);
 			pages.setTotal(total);
 			pages.setTotalPage(totalPage);
 		}
 		if(!StringUtils.isEmpty(submit2)){
-			submit2 = request.getParameter("submit2");
-			submit2 = new String(submit2.getBytes("iso8859-1"),"UTF-8");
-		}
-		if(!StringUtils.isEmpty(submit2)){
-			total = activityService.getActivityPersonalByActivityId(activityId, 0).size();
-			totalPage = total/pageSize;
-			if(total%pageSize != 0){
-				totalPage++;
-			}
 			if(page == null){
 				page = 1;
 			}
 			if(pagee != null){
 				page = pagee;
-				apFilmList = activityService.getActivityPersonalByActivityId(activityId,page);
+				apFilmList = activityService.getActivityPersonal(activityId, sessionTime, name, phone, filmTitle, cinemaId, page);
 				for(ActivityPersonal ap:apFilmList){
 					ap.setNickeName(URLDecoder.decode(ap.getNickeName(), "utf-8"));
 				}
@@ -971,7 +957,7 @@ public class CinemaAction {
 				pagee = 1;
 			}
 			if(page != null){
-				apFilmList = activityService.getActivityPersonalByActivityId(activityId,page);
+				apFilmList = activityService.getActivityPersonal(activityId, sessionTime, name, phone, filmTitle, cinemaId, page);
 				for(ActivityPersonal ap:apFilmList){
 					ap.setNickeName(URLDecoder.decode(ap.getNickeName(), "utf-8"));
 				}
@@ -984,7 +970,7 @@ public class CinemaAction {
 		}
 		if(!StringUtils.isEmpty(submit1)){
 			try{
-				apFilmList = activityService.getActivityPersonalByActivityId(activityId,0);
+				activityService.getActivityPersonal(activityId, sessionTime, name, phone, filmTitle, cinemaId, page);
 				String title = "活动个人详情一览表";
 				String[] rowsName = new String[]{"ID","姓名","电话","影片名称","影片场次时间","订单完成时间","购票数"};
 				List<Object[]>  dataList = new ArrayList<Object[]>();  
@@ -1116,7 +1102,7 @@ public class CinemaAction {
 	@RequestMapping(value="/cancleFilmOrder/{id}" , method={GET , POST})
 	public String cancleFilmOrder(Model model,@PathVariable("id")String id){
 		FilmOrders filmOrders = cinemaService.findFilmOrdersInfo(id);
-		String vistaMemberCardNumber = "9999 9999 9999 9999";
+		/*String vistaMemberCardNumber = "9999 9999 9999 9999";
 		
 		if (!StringUtils.isEmpty(filmOrders.getUserNumber())) {
 			UserMember userMember = cinemaService.findUserMember(filmOrders.getUserNumber());
@@ -1171,7 +1157,7 @@ public class CinemaAction {
 				 //更改本地数据库的订单信息
 				 filmService.cancleOrder(9,id);
 			 }
-		 }
+		 }*/
 		return "redirect:/cinkerMaintain/getSearchFilmOrders?page=1";
 	}
 

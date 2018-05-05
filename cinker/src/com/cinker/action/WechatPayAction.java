@@ -64,7 +64,7 @@ public class WechatPayAction{
         	content=cinkerWechatPay.getImageUrl(filmName,outTradeNo,sessionID,(int)((Double.valueOf(totalPrice)*100)));
         	//如果生成二维码成功，则生成该订单一条对于的支付信息
         	List<Payment> paymentList=paymentService.getPaymentList(outTradeNo);
-        	if(!StringUtils.isEmpty(content)&& (paymentList==null || paymentList.size()<1)){
+        	if(!StringUtils.isEmpty(content) && (paymentList==null || paymentList.size()<1)){
         		Payment payment=new Payment();
             	payment.setType(Payment.PAYMENT_WECHAT);
             	payment.setStatus(Payment.PAYMENT_STATUS_INIT);

@@ -167,7 +167,7 @@ public class WechatAction {
 	
 	@RequestMapping(value = "/orderPaySuccess", method ={GET})
 	public String orderPaySuccess(String tradeno,String vistaMemberCardNumber,Model model){
-		 logger.info("微信订单查询单号： " + tradeno);
+		 logger.info("微信订单查询单号：" + tradeno);
 		 String queryOrderResult = "";
 		 try {			 
 			queryOrderResult = WxPayUtil.queryOrder(APPID,MCH_ID,API_KEY,tradeno);			
@@ -804,6 +804,12 @@ public class WechatAction {
 		unsuccessRecord.setEndTime(endTime);
 		
 		paymentService.saveUnsuccessRecord(unsuccessRecord);
+	}
+	
+	@RequestMapping(value = "/test", method = { GET, POST })
+	public String test() {
+		String result = WxPayUtil.payRefund(APPID, MCH_ID, API_KEY, "1000001835913587", "2000001835913587", 15000, 15000, NOTIFY_URL);
+		return result;
 	}
 		
 }

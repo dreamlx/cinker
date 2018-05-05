@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.cinker.model.User;
 import com.cinker.service.UserService;
+import com.cinker.wechat.WxPayUtil;
 
 @Controller
 @RequestMapping("/user")
@@ -43,6 +44,5 @@ public class UserAction {
 		
 		return result;
 	}
-	
-
+		
 }

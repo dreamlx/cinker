@@ -47,11 +47,16 @@ public class ActivityServiceImpl implements ActivityService{
 		
 		return activityDao.getActivityPersonalbyorderNumber(orderNumber);
 	}
-
+	
 	@Override
-	public List<ActivityPersonal> getActivityPersonalByActivityId(
-			String activityId,Integer page) {
-		return activityDao.getActivityPersonalByActivityId(activityId,page);
+	public int getActivityPersonalCount(String activityId,String sessionTime,String name,String phone,String filmTitle,String cinemaId) {
+		return activityDao.getActivityPersonalCount(activityId,sessionTime,name,phone,filmTitle,cinemaId);
+	}
+	
+	@Override
+	public List<ActivityPersonal> getActivityPersonal(
+			String activityId,String sessionTime,String name,String phone,String filmTitle,String cinemaId,Integer page) {
+		return activityDao.getActivityPersonal(activityId,sessionTime,name,phone,filmTitle,cinemaId,page);
 	}
 
 	@Override

@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.OrderUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -41,7 +40,6 @@ import com.cinker.model.UserMember;
 import com.cinker.model.UserVipMember;
 import com.cinker.service.FilmService;
 import com.cinker.service.UserMemberService;
-import com.cinker.util.OrderNumUtil;
 import com.cinker.util.SortClass;
 import com.danga.MemCached.MemCachedClient;
 

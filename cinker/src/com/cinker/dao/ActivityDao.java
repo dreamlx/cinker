@@ -19,8 +19,13 @@ public interface ActivityDao {
 	
 	public ActivityPersonal getActivityPersonalbyorderNumber(String orderNumber);
 	
-	public List<ActivityPersonal> getActivityPersonalByActivityId(String activityId,Integer page);
+	List<ActivityPersonal> getActivityPersonal(String activityId,String sessionTime,String name,String phone,String filmTitle,String cinemaId,Integer page);
 
 	public void updateActivityPersonalStatus();
+
+	int getActivityPersonalCount(String activityId, String sessionTime, String name, String phone, String filmTitle,
+			String cinemaId);
+
+	
 	
 }

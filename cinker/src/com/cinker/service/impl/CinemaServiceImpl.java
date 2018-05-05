@@ -219,7 +219,12 @@ public class CinemaServiceImpl implements CinemaService{
 		
 		return cinemaDao.getPaymentInfo();
 	}
-
+	@Override
+	public int findPaymentCount(String userNickName,
+			String orderNumber, String paymentID, String beginTime,
+			String endTime,Integer page) {
+		return cinemaDao.findPaymentCount(userNickName, orderNumber, paymentID, beginTime, endTime, page);
+	}
 	@Override
 	public List<Payment> getSearchPayment(String userNickName,
 			String orderNumber, String paymentID, String beginTime,
@@ -260,7 +265,6 @@ public class CinemaServiceImpl implements CinemaService{
 
 	@Override
 	public List<FilmInfo> getFilmInfoType(String filmId) {
-		// TODO Auto-generated method stub
 		return cinemaDao.getFilmInfoType(filmId);
 	}
 
@@ -294,11 +298,6 @@ public class CinemaServiceImpl implements CinemaService{
 		return cinemaDao.editActivityFilm(id);
 	}
 
-	@Override
-	public List<ActivityPersonal> getActivityPersonal(Integer page) {
-		
-		return cinemaDao.getActivityPersonal(page);
-	}
 
 	@Override
 	public int findOrderCount(String orderNumber, String filmTitle,
@@ -338,26 +337,17 @@ public class CinemaServiceImpl implements CinemaService{
 	}
 
 	@Override
-	public int getActivityPersonalCount() {
-		// TODO Auto-generated method stub
-		return cinemaDao.getActivityPersonalCount();
-	}
-
-	@Override
 	public int getFilmOrdersTotal() {
-		// TODO Auto-generated method stub
 		return cinemaDao.getFilmOrdersTotal();
 	}
 
 	@Override
 	public List<UserMember> getPaymentInformations(String userNumber) {
-		// TODO Auto-generated method stub
 		return cinemaDao.getPaymentInformations(userNumber);
 	}
 
 	@Override
 	public List<Payment> getPaymentUserNickName(String orderNumber) {
-		// TODO Auto-generated method stub
 		return cinemaDao.getPaymentUserNickName(orderNumber);
 	}
 
@@ -383,9 +373,13 @@ public class CinemaServiceImpl implements CinemaService{
 	}
 
 	@Override
+	public int findActivityFilmCount(String filmId, String filmTitle, String sessionTime, String cinemaId) {
+		return cinemaDao.findActivityFilmCount(filmId, filmTitle, sessionTime, cinemaId);
+	}
+	@Override
 	public List<ActivityFilm> getSearchActivityFilm(String filmId,
-			String filmTitle, Integer page) {
-		return cinemaDao.getSearchActivityFilm(filmId, filmTitle, page);
+			String filmTitle, String sessionTime, String cinemaId, Integer page) {
+		return cinemaDao.getSearchActivityFilm(filmId,filmTitle, sessionTime, cinemaId, page);
 	}
 
 }

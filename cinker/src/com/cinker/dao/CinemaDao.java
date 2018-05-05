@@ -113,11 +113,7 @@ public interface CinemaDao {
 	public void deleteActivityFilm(int id);
 	
 	public ActivityFilm editActivityFilm(String id);
-	
-	public List<ActivityPersonal> getActivityPersonal(Integer page);
-	
-	public int getActivityPersonalCount();
-
+		
 	public List<FilmOrders> getSearch(String orderNumber, String filmTitle,
 			String beginTime, String endTime, String scheduledFilmId,
 			String beginShowTime, String endShowTime,String status,Integer page,String submit1,String submit2,String cinemaId);
@@ -138,7 +134,9 @@ public interface CinemaDao {
 	
 	public List<UserVipMember> getSearchUserVipMember(String phone, String areaNumber,Integer page,String submit1,String submit2);
 	
-	public List<ActivityFilm> getSearchActivityFilm(String filmId, String filmTitle,Integer page);
+	int findActivityFilmCount(String filmId, String filmTitle, String sessionTime, String cinemaId);
+	List<ActivityFilm> getSearchActivityFilm(String filmId, String filmTitle, String sessionTime, String cinemaId,
+			Integer page);
 
 	int findOrderCount(String orderNumber, String filmTitle,
 			String beginTime, String endTime, String scheduledFilmId,
@@ -146,4 +144,9 @@ public interface CinemaDao {
 
 	int findOrderCount(String orderNumber, String filmTitle, String beginTime, String endTime, String scheduledFilmId,
 			String beginShowTime, String endShowTime, String status, String cinemaId);
+
+	int findPaymentCount(String userNickName, String orderNumber, String paymentID, String beginTime, String endTime,
+			Integer page);
+
+	
 }

@@ -9,6 +9,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.cinker.dao.ActivityDao;
 import com.cinker.model.ActivityFilm;
@@ -122,18 +123,66 @@ public class ActivityDaoImpl extends BaseDaoImpl implements ActivityDao{
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<ActivityPersonal> getActivityPersonalByActivityId(
-			String activityId,Integer page) {
+	public int getActivityPersonalCount(String activityId,String sessionTime,String name,String phone,String filmTitle,String cinemaId) {
 		try{
-			StringBuffer sb = new StringBuffer("SELECT * FROM cinker_activity_personal WHERE 1=1 AND Status = 1 ");
-			if(activityId != null){
-				sb.append(" AND ActivityId LIKE '%" + activityId +"%'");
+			StringBuffer sb = new StringBuffer("SELECT COUNT(*) FROM cinker_activity_personal ");
+			sb.append(" WHERE 1=1 AND Status = 1 ");
+			if(!StringUtils.isEmpty(activityId)){
+				sb.append(" AND ActivityId = '" + activityId +"'");
+			}
+			if(!StringUtils.isEmpty(sessionTime)){
+				sb.append(" AND sessionTime LIKE '%" + sessionTime +"%'");
+			}
+			if(!StringUtils.isEmpty(name)){
+				sb.append(" AND name LIKE '%" + name +"%'");
+			}
+			if(!StringUtils.isEmpty(phone)){
+				sb.append(" AND phone = '" + phone +"'");
+			}
+			if(!StringUtils.isEmpty(filmTitle)){
+				sb.append(" AND filmTitle LIKE '%" + filmTitle +"%'");
+			}
+			if(!StringUtils.isEmpty(cinemaId)){
+				sb.append(" AND cinemaId = '" + cinemaId +"'");
 			}
 			sb.append(" ORDER BY ID desc ");
-			if(page != 0 && page!= null){
-				sb.append(" LIMIT "+(page-1)*pageSize +","+pageSize +"");
+			return jdbcTemplate.queryForObject(sb.toString(), Integer.class);
+		}catch(EmptyResultDataAccessException e){
+			return 0;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivityPersonal> getActivityPersonal(
+			String activityId,String sessionTime,String name,String phone,String filmTitle,String cinemaId,Integer page) {
+		try{
+			String columnName = "cap.ID,cap.Name,Phone,FilmTitle,SessionTime,StartTime,DateTime,cap.CinemaId,NickeName,ActivityId,Quaty,ActivityUserNumber,OrderNumber,OrderEndTime,Status,cc.name as cinemaName";
+			StringBuffer sb = new StringBuffer("SELECT "+columnName+" FROM cinker_activity_personal cap INNER JOIN cinker_cinema cc ON cap.cinemaId = cc.cinemaId ");
+			sb.append(" WHERE 1=1 AND Status = 1 ");
+			if(!StringUtils.isEmpty(activityId)){
+				sb.append(" AND ActivityId = '" + activityId +"'");
+			}
+			if(!StringUtils.isEmpty(sessionTime)){
+				sb.append(" AND sessionTime LIKE '%" + sessionTime +"%'");
+			}
+			if(!StringUtils.isEmpty(name)){
+				sb.append(" AND cap.name LIKE '%" + name +"%'");
+			}
+			if(!StringUtils.isEmpty(phone)){
+				sb.append(" AND phone = '" + phone +"'");
+			}
+			if(!StringUtils.isEmpty(filmTitle)){
+				sb.append(" AND filmTitle LIKE '%" + filmTitle +"%'");
+			}
+			if(!StringUtils.isEmpty(cinemaId)){
+				sb.append(" AND cap.cinemaId = '" + cinemaId +"'");
+			}
+			sb.append(" ORDER BY cap.ID desc ");
+			if(null != page){
+				if(0 != page)
+				 sb.append(" LIMIT "+(page-1)*pageSize +","+pageSize +"");
 			}
 			return jdbcTemplate.query(sb.toString(), new BeanPropertyRowMapper(ActivityPersonal.class));
 		}catch(EmptyResultDataAccessException e){

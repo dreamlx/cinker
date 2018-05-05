@@ -10,7 +10,7 @@ public class ConfigUtil {
 	//public final static String SIGN_TYPE = "MD5";//签名加密方式 
 	//微信支付统一接口的回调action 
 	//public final static String NOTIFY_URL = "http://weixin.cinker.cn/cinker/wechat/notify"; //用于告知微信服务器 调用成功
-	
+	public final static String CERTIFICATE_PATH = "";
 	
 	/**
 	 * 微信基础接口地址

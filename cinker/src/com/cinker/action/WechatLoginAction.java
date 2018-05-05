@@ -239,6 +239,7 @@ public class WechatLoginAction {
 		}
 	}
 
+
 	@RequestMapping(value = "/getRandomNumber", method = { GET, POST })
 	public @ResponseBody String getRandomNumber(@RequestBody String phone, Model model) throws IOException{
 		String[] tel = phone.split("=");
